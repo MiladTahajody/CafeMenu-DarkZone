@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Digital CAFE Menu</title>
 <style>
-  html, body { margin:0; padding:0; height:100%; overflow:hidden; }
+  html, body {
+    margin:0; padding:0; height:100%; overflow:hidden;
+    font-family: sans-serif;
+  }
+  /* Preloader overlay */
   #preloader {
     position:fixed;
     top:0; left:0;
@@ -14,46 +18,68 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-family:sans-serif;
-    font-size:20px;
     z-index:9999;
-    transition:opacity 0.5s ease;
+    flex-direction: column;
+    font-size:2em;
+    opacity:1;
+    transition: opacity 0.5s ease;
   }
-  iframe {
+
+  /* iframe hidden initially */
+  #figmaIframe {
     border:0;
     width:100%;
     height:100%;
     position:fixed;
     top:0; left:0;
-    opacity:0; /* مخفی در ابتدا */
+    opacity:0;
     transition: opacity 0.5s ease;
   }
 </style>
-<script>
-  // جلوگیری از Back مرورگر
-  window.history.pushState(null, null, window.location.href);
-  window.onpopstate = function() {
-    window.history.pushState(null, null, window.location.href);
-  };
-</script>
 </head>
 <body>
 
-<div id="preloader">Loading menu test...</div>
+<!-- Preloader overlay -->
+<div id="preloader">
+  <span id="textLoader"></span>
+</div>
 
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="100%" height="100%" 
+<!-- Figma iframe -->
+<iframe id="figmaIframe" style="border: 1px solid rgba(0, 0, 0, 0.1);" width="100%" height="100%" 
 src="https://embed.figma.com/proto/TiL3j8NtfS75NjnjbFsksg/DIGITAL-MENU--Community-?page-id=0%3A1&node-id=17-2971&p=f&viewport=697%2C577%2C0.23&scaling=scale-down-width&content-scaling=responsive&starting-point-node-id=17%3A2971&embed-host=share&hide-ui=1" 
 allowfullscreen></iframe>
 
 <script>
-  const iframe = document.getElementById('figmaFrame');
+  const iframe = document.getElementById('figmaIframe');
   const preloader = document.getElementById('preloader');
+  const textLoader = document.getElementById('textLoader');
 
-  // وقتی iframe لود شد، Preloader fade out و iframe fade in
+  // متن برای نمایش ترتیبی
+  const words = ["Welcome", "to", "Cafe"];
+  let currentWord = 0;
+  let currentChar = 0;
+
+  function typeNextChar() {
+    if(currentWord >= words.length) return;
+    textLoader.textContent += words[currentWord][currentChar];
+    currentChar++;
+    if(currentChar < words[currentWord].length) {
+      setTimeout(typeNextChar, 200); // سرعت تایپ کاراکتر
+    } else {
+      // فاصله بعد از کلمه
+      textLoader.textContent += " ";
+      currentWord++;
+      currentChar = 0;
+      setTimeout(typeNextChar, 400); // فاصله بین کلمات
+    }
+  }
+  typeNextChar();
+
+  // وقتی iframe لود شد
   iframe.onload = function() {
     iframe.style.opacity = '1';
     preloader.style.opacity = '0';
-    setTimeout(()=>preloader.remove(), 1000);
+    setTimeout(()=>preloader.remove(), 4000); // حذف کامل بعد fade
   };
 </script>
 
